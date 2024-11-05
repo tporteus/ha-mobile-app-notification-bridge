@@ -2,8 +2,8 @@
   "domain": "mobile_app_notification_bridge",
   "name": "Mobile App Notification Bridge",
   "codeowners": ["@tporteus"],
-  "documentation": "https://github.com/tporteus/ha-mobile-app-notification-bridge",
   "dependencies": ["sensor"],
+  "documentation": "https://github.com/tporteus/ha-mobile-app-notification-bridge",
   "iot_class": "calculated",
   "version": "1.1.0"
 
