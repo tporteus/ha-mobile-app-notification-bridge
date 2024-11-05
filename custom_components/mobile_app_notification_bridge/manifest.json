@@ -2,8 +2,8 @@
   "domain": "mobile_app_notification_bridge",
   "name": "Mobile App Notification Bridge",
   "version": "1.1.0",
-  "documentation": "https://example.com",
+  "documentation": "https://github.com/tporteus/ha-mobile-app-notification-bridge",
   "requirements": [],
   "dependencies": ["sensor"],
-  "codeowners": ["@yourusername"]
+  "codeowners": ["@tporteus"]
 }
