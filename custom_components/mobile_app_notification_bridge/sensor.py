@@ -16,7 +16,7 @@ class NotificationSensor(Entity):
             "title": None,
             "message": None,
             "timestamp": None,
-            "history": deque(maxlen=5)
+            "history": deque(maxlen=5)  # Store the last 5 notifications
         }
 
     @property

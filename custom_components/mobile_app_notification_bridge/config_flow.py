@@ -1,31 +1,21 @@
 import voluptuous as vol
 from homeassistant import config_entries
 from .const import (
-    DOMAIN,
-    FORWARD_APP_LIST,
-    MATCH_TYPE,
-    MATCH_TYPES,
-    CONF_NOTIFY,
-    INCLUDE_KEYWORDS,
-    EXCLUDE_KEYWORDS,
-    NOTIFICATION_DELAY,
-    NOTIFICATION_MODE,
-    NOTIFICATION_MODES,
-    APP_ICONS,
-    DEVICE_FILTER,
-    SENSOR_MODE,
-    SENSOR_MODES,
+    DOMAIN, FORWARD_APP_LIST, CONF_NOTIFY, SENSOR_MODE, SENSOR_MODES,
+    MATCH_TYPE, MATCH_TYPES, INCLUDE_KEYWORDS, EXCLUDE_KEYWORDS,
+    NOTIFICATION_DELAY, NOTIFICATION_MODE, NOTIFICATION_MODES, APP_ICONS,
+    DEVICE_FILTER
 )
 
 class NotificationBridgeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
+        """Handle the initial step for user configuration."""
         if user_input is not None:
             # Proceed to advanced setup if user chooses
             if user_input.get("advanced_config"):
                 return await self.async_step_advanced(user_input)
-
             return self.async_create_entry(title="Mobile App Notification Bridge", data=user_input)
 
         return self.async_show_form(
@@ -33,8 +23,8 @@ class NotificationBridgeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema({
                 vol.Required(FORWARD_APP_LIST, default=["Deliveroo", "Just Eat", "Uber Eats"]): [str],
                 vol.Required(CONF_NOTIFY, default="notify.notify"): str,
-                vol.Optional("advanced_config", default=False): bool,
                 vol.Required(SENSOR_MODE, default="per_app"): vol.In(SENSOR_MODES),
+                vol.Optional("advanced_config", default=False): bool,
             }),
             description_placeholders={
                 "description": "Choose the apps to monitor for notifications, "
@@ -44,6 +34,7 @@ class NotificationBridgeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_advanced(self, user_input=None):
+        """Handle the advanced configuration options."""
         if user_input is not None:
             return self.async_create_entry(title="Mobile App Notification Bridge - Advanced", data=user_input)
 
