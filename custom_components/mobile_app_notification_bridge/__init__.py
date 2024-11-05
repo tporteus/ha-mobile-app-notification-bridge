@@ -1,19 +1,28 @@
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import async_add_entities
-from .const import *
+from .const import DOMAIN
 from .sensor import NotificationSensor
-import asyncio
 
-async def async_setup_entry(hass, config_entry):
-    forward_app_list = config_entry.data.get(FORWARD_APP_LIST, [])
-    match_type = config_entry.data.get(MATCH_TYPE, "partial")
-    notify_service = config_entry.data.get(CONF_NOTIFY, "notify.notify")
-    include_keywords = config_entry.data.get(INCLUDE_KEYWORDS, "").split(",")
-    exclude_keywords = config_entry.data.get(EXCLUDE_KEYWORDS, "").split(",")
-    delay = config_entry.data.get(NOTIFICATION_DELAY, 0)
-    notification_mode = config_entry.data.get(NOTIFICATION_MODE, "both")
-    app_icons = config_entry.data.get(APP_ICONS, {})
-    device_filter = config_entry.data.get(DEVICE_FILTER, [])
-    sensor_mode = config_entry.data.get(SENSOR_MODE, "per_app")
+async def async_setup(hass: HomeAssistant, config: dict):
+    """Set up the Mobile App Notification Bridge component."""
+    hass.data.setdefault(DOMAIN, {})
+    return True
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Set up Mobile App Notification Bridge from a config entry."""
+    hass.data[DOMAIN][entry.entry_id] = entry.data
+
+    forward_app_list = entry.data.get("forward_app_list", [])
+    notify_service = entry.data.get("notify_service", "notify.notify")
+    match_type = entry.data.get("match_type", "partial")
+    include_keywords = entry.data.get("include_keywords", "").split(",")
+    exclude_keywords = entry.data.get("exclude_keywords", "").split(",")
+    delay = entry.data.get("notification_delay", 0)
+    notification_mode = entry.data.get("notification_mode", "both")
+    app_icons = entry.data.get("app_icons", {})
+    device_filter = entry.data.get("device_filter", [])
+    sensor_mode = entry.data.get("sensor_mode", "per_app")
 
     sensors = {}
 
@@ -64,5 +73,13 @@ async def async_setup_entry(hass, config_entry):
                 if notification_mode in ["update_sensor_only", "both"]:
                     sensors[sensor_key].update_sensor(title, message)
 
+    # Listen for mobile notifications
     hass.bus.async_listen("mobile_app_notification_received", handle_notification)
     return True
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Unload a config entry."""
+    unload_ok = await hass.config_entries.async_forward_entry_unload(entry, "sensor")
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id)
+    return unload_ok
