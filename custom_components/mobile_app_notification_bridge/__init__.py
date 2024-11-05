@@ -33,16 +33,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     sensors = {}
 
     async def create_sensor(app, device=None):
-        """Create or retrieve an existing sensor for an app or device."""
-        sensor_key = (app, device) if sensor_mode == "per_device" else app
-        if sensor_key not in sensors:
-            sensor_name = f"{app} Notification"
-            if device:
-                sensor_name += f" - {device}"
-            icon = app_icons.get(app, "mdi:bell-outline")
-            sensors[sensor_key] = NotificationSensor(hass, sensor_name, icon)
-            await hass.helpers.entity_component.async_add_entities([sensors[sensor_key]])
-        return sensors[sensor_key]
+    """Create or retrieve an existing sensor for an app or device."""
+    # Ensure sensor_key is always a tuple to avoid "unhashable type: 'list'" error
+    sensor_key = (app, device) if device else (app,)
+    if sensor_key not in sensors:
+        sensor_name = f"{app} Notification"
+        if device:
+            sensor_name += f" - {device}"
+        icon = app_icons.get(app, "mdi:bell-outline")
+        sensors[sensor_key] = NotificationSensor(hass, sensor_name, icon)
+        await hass.helpers.entity_component.async_add_entities([sensors[sensor_key]])
+    return sensors[sensor_key]
+
 
     def match_notification(message, app_list, match_type):
         """Check if a message matches any app name based on match type."""
