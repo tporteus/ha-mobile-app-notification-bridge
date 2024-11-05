@@ -4,6 +4,9 @@
   "codeowners": ["@tporteus"],
   "dependencies": ["sensor"],
   "documentation": "https://github.com/tporteus/ha-mobile-app-notification-bridge",
-  "iot_class": "calculated"
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/tporteus/ha-mobile-app-notification-bridge"
+  
+
 
 }
